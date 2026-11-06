@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoey Agent • Alive Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0e111a 0%, #171b26 50%, #201a2b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      background: rgba(22, 27, 39, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(192, 132, 252, 0.1);
+      overflow: hidden;
+    }
+    /* Profile Header */
+    .profile-header {
+      padding: 20px 28px;
+      background: rgba(30, 37, 54, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .avatar-wrapper {
+      position: relative;
+      width: 58px;
+      height: 58px;
+    }
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #d8b4fe;
+      box-shadow: 0 0 15px rgba(216, 180, 254, 0.4);
+      animation: pulse-glow 3s infinite alternate;
+      transition: all 0.3s ease;
+    }
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 10px rgba(216, 180, 254, 0.3); }
+      100% { box-shadow: 0 0 20px rgba(216, 180, 254, 0.6); }
+    }
+    .status-dot {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      background: #10b981;
+      border: 2px solid #161b27;
+      border-radius: 50%;
+    }
+    .details h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .details .badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      background: rgba(216, 180, 254, 0.15);
+      color: #d8b4fe;
+      border-radius: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(216, 180, 254, 0.3);
+    }
+    .details p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-pill {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Chat Messages */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .message-row {
+      display: flex;
+      gap: 12px;
+      max-width: 80%;
+    }
+    .message-row.agent {
+      align-self: flex-start;
+    }
+    .message-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .user-avatar-bubble {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .agent .msg-bubble {
+      background: #1f2738;
+      color: #f1f5f9;
+      border-top-left-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .user .msg-bubble {
+      background: linear-gradient(135deg, #9333ea, #7c3aed);
+      color: #ffffff;
+      border-top-right-radius: 4px;
+    }
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      gap: 12px;
+    }
+    .typing-indicator.active {
+      display: flex;
+    }
+    .dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 18px;
+      background: #1f2738;
+      border-radius: 18px;
+      border-top-left-radius: 4px;
+    }
+    .dots span {
+      width: 6px;
+      height: 6px;
+      background: #a855f7;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite ease-in-out both;
+    }
+    .dots span:nth-child(1) { animation-delay: -0.32s; }
+    .dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
+    }
+
+    /* Quick Prompts */
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 24px 12px 24px;
+    }
+    .prompt-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      padding: 7px 14px;
+      border-radius: 16px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .prompt-chip:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: #a855f7;
+      color: #e9d5ff;
+    }
+
+    /* Input Footer */
+    .chat-footer {
+      padding: 16px 24px 20px 24px;
+      background: rgba(30, 37, 54, 0.6);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      background: rgba(15, 20, 31, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 6px 8px 6px 18px;
+      transition: border 0.2s ease;
+    }
+    .input-wrapper:focus-within {
+      border-color: #a855f7;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+    }
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #f8fafc;
+      font-size: 0.95rem;
+    }
+    .chat-input::placeholder {
+      color: #64748b;
+    }
+    .send-btn {
+      background: linear-gradient(135deg, #9333ea, #7c3aed);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(147, 51, 234, 0.5);
+    }
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="profile-header">
+      <div class="profile-info">
+        <div class="avatar-wrapper">
+          <img src="/avatar.jpg" alt="Zoey Agent" class="avatar-img" id="avatarImg">
+          <div class="status-dot" title="Alive & Attentive"></div>
+        </div>
+        <div class="details">
+          <h1>Zoey <span class="badge">Sweet & Playful</span></h1>
+          <p id="zoeyStatus">🟢 Online • Daydreaming by the window with her cat 🐱✨</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="chat-pill">💬 Live Companion</div>
+      </div>
+    </header>
+
+    <!-- Chat Messages -->
+    <main class="chat-body" id="chatBody">
+      <div class="message-row agent">
+        <img src="/avatar.jpg" class="msg-avatar" alt="Zoey">
+        <div class="msg-bubble">
+          Hey there! I'm Zoey, and I was just curled up by the window with a good book and my naughty cat. I'm definitely looking for an excuse to procrastinate today 😜. How's your day treating you?
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="message-row agent typing-indicator" id="typingIndicator">
+        <img src="/avatar.jpg" class="msg-avatar" alt="Zoey">
+        <div class="dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Quick Prompts -->
+    <div class="quick-prompts">
+      <div class="prompt-chip" onclick="sendQuickPrompt('Tell me a funny secret 🤭')">🤭 Tell me a funny secret</div>
+      <div class="prompt-chip" onclick="sendQuickPrompt('What is making you laugh today? 😂')">😂 What makes you laugh?</div>
+      <div class="prompt-chip" onclick="sendQuickPrompt('你今天怎么这么可爱呀？ 🌸')">🌸 你今天怎么这么可爱呀？</div>
+      <div class="prompt-chip" onclick="sendQuickPrompt('今天有点累，陪我聊聊好吗？ 🥺')">🥺 今天有点累，陪我聊聊好吗？</div>
+    </div>
+
+    <!-- Input Box -->
+    <footer class="chat-footer">
+      <div class="input-wrapper">
+        <input type="text" id="userInput" class="chat-input" placeholder="Type a message in English or 中文..." autocomplete="off">
+        <button id="sendBtn" class="send-btn" title="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById('chatBody');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    let conversationHistory = [];
+
+    function appendMessage(role, text) {
+      const row = document.createElement('div');
+      row.className = `message-row ${role}`;
+
+      if (role === 'agent') {
+        row.innerHTML = `
+          <img src="/avatar.jpg" class="msg-avatar" alt="Zoey">
+          <div class="msg-bubble">${escapeHtml(text)}</div>
+        `;
+      } else {
+        row.innerHTML = `
+          <div class="user-avatar-bubble">You</div>
+          <div class="msg-bubble">${escapeHtml(text)}</div>
+        `;
+      }
+
+      chatBody.insertBefore(row, typingIndicator);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function handleSend() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      userInput.value = '';
+      appendMessage('user', message);
+      conversationHistory.push({ role: 'user', text: message });
+
+      typingIndicator.classList.add('active');
+      chatBody.scrollTop = chatBody.scrollHeight;
+      sendBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message, history: conversationHistory })
+        });
+
+        const data = await response.json();
+        const reply = data.reply || "I'm having a little trouble thinking right now, but I'm right here with you.";
+        
+        appendMessage('agent', reply);
+        conversationHistory.push({ role: 'model', text: reply });
+      } catch (err) {
+        appendMessage('agent', "Oops! I couldn't reach the server. Please check if the backend is running.");
+      } finally {
+        typingIndicator.classList.remove('active');
+        chatBody.scrollTop = chatBody.scrollHeight;
+        sendBtn.disabled = false;
+        userInput.focus();
+      }
+    }
+
+    function sendQuickPrompt(prompt) {
+      userInput.value = prompt;
+      handleSend();
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSend();
+    });
+  </script>
+</body>
+</html>
