@@ -8,16 +8,19 @@
 ~~## Quick Start~~
 
 ~~1. **Install Dependencies**:~~
+
   ~~```bash~~
   ~~pip install -r requirements.txt~~
   ~~``~~
 
 ~~2. **Set your Gemini API Key** (optional for live AI responses):~~
+
    ~~```bash~~
    ~~export GEMINI_API_KEY="your-gemini-api-key"~~
    ~~```~~
 
 ~~3. **Start the Web App**:~~
+
    ~~```bash~~
    ~~python app.py~~
    ~~```~~
