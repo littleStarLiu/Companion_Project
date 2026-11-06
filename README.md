@@ -25,4 +25,4 @@
    ~~python app.py~~
    ~~```~~
    
-~~4. **Only Support Local Network**~~
+~~4. **Only Support Local HOST!!**~~
